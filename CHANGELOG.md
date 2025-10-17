@@ -1,5 +1,9 @@
 # MuxMate Changelog
 
+## 3.1.1 - 2025-10-17
+### Removed
+- Static MP4 generation
+
 ## 3.1.0 - 2025-03-10
 ### Added
 - Added support for rendering Twig in the `scriptSrcNonce` setting
