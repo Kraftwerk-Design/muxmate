@@ -39,7 +39,6 @@ final class MuxApiHelper
         $createAssetRequest = new CreateAssetRequest([
             'input' => $input,
             'max_resolution_tier' => $maxResolutionTier,
-            'mp4_support' => 'standard',
             'playback_policy' => [PlaybackPolicy::_PUBLIC, PlaybackPolicy::SIGNED],
         ]);
 
