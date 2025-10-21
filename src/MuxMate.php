@@ -22,6 +22,9 @@ use craft\services\Assets;
 use craft\services\Fields;
 use craft\web\Response;
 use craft\web\UrlManager;
+use craft\gql\TypeManager;
+use craft\events\DefineGqlTypeFieldsEvent;
+
 
 use Monolog\Formatter\LineFormatter;
 
@@ -326,6 +329,5 @@ class MuxMate extends Plugin
                 }
             );
         }
-
     }
 }

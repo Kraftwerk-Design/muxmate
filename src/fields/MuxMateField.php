@@ -15,12 +15,16 @@ use craft\helpers\ElementHelper;
 use craft\helpers\Html;
 use craft\helpers\StringHelper;
 use craft\web\View;
+use craft\gql\GqlEntityRegistry;
+use craft\gql\TypeLoader;
 
 use vaersaagod\muxmate\helpers\MuxMateHelper;
 use vaersaagod\muxmate\models\MuxMateFieldAttributes;
+use vaersaagod\muxmate\graphql\types\MuxAssetType;
 
 use yii\base\InvalidConfigException;
 use yii\db\Schema;
+use GraphQL\Type\Definition\Type;
 
 /**
  * MuxMate field type
@@ -87,6 +91,20 @@ class MuxMateField extends Field implements PreviewableFieldInterface
     public function getSettingsHtml(): ?string
     {
         return null;
+    }
+
+    public function getContentGqlType(): Type|array
+    {
+        $type = new MuxAssetType();
+        $typeName = $type->name;
+        $muxType = GqlEntityRegistry::getEntity($typeName)
+            ?: GqlEntityRegistry::createEntity($typeName, $type);
+
+        TypeLoader::registerType($typeName, static function () use ($muxType) {
+            return $muxType;
+        });
+
+        return $muxType;
     }
 
     /**
