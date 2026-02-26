@@ -1,5 +1,8 @@
 # MuxMate 3.x  
 
+> [!IMPORTANT]
+> This repository is a **fork**. The original project is available at [vaersaagod/muxmate](https://github.com/vaersaagod/muxmate).
+
 Mux ado about streaming, mate!
 
 <img src="https://github.com/vaersaagod/muxmate/blob/main/src/icon.svg" width="200" height="200" alt="Logo">
