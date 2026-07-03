@@ -3,6 +3,7 @@
 {% set inline = inline ?? false %}
 {% set lazyload = lazyload ?? false %}
 {% set nonce = nonce ?? null %}
+{% set minResolution = minResolution ?? false %}
 {% set maxResolution = maxResolution ?? false %}
 
 {% if playbackId %}
@@ -11,6 +12,7 @@
         'playback-id': playbackId ~ (token ? "?token=#{token}"),
         'metadata-video-title': video.title,
         'metadata-video-id': video.uid,
+        'min-resolution': minResolution,
         'max-resolution': maxResolution
     } %}
 

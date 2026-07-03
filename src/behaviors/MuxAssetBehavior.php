@@ -39,7 +39,7 @@ class MuxAssetBehavior extends Behavior
     }
 
     /**
-     * @param array|null $params Mux params – so far only `max_resolution` is supported
+     * @param array|null $params Mux params – so far only `min_resolution` and `max_resolution` are supported
      * @param string|null $policy "signed" or "public"
      * @return string|null
      * @throws \yii\base\InvalidConfigException
@@ -51,7 +51,7 @@ class MuxAssetBehavior extends Behavior
 
     /**
      * @param array|null $options "inline", "lazyload"
-     * @param array|null $params Mux params – so far only `max_resolution` is supported
+     * @param array|null $params Mux params – so far only `min_resolution` and `max_resolution` are supported
      * @param string|null $policy "signed" or "public"
      * @return string|Markup
      * @throws \Exception

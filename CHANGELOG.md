@@ -1,5 +1,9 @@
 # MuxMate Changelog
 
+## Unreleased
+### Added
+- Added support for passing `min_resolution` to `getMuxStreamUrl()` and `getMuxVideo()`
+
 ## 3.2.0 - 2026-02-25
 ### Changed
 - Bumped the requirement for `firebase/php-jwt` to `^7.0`

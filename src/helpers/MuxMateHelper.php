@@ -51,6 +51,9 @@ final class MuxMateHelper
     /** @var MuxMateField[] */
     private static array $_muxMateFieldsByVolume = [];
 
+    /** @var string[] */
+    private const MUX_RESOLUTIONS = ['270p', '360p', '480p', '540p', '720p', '1080p', '1440p', '2160p'];
+
     /**
      * @param Asset|null $asset
      * @return string|null
@@ -253,10 +256,10 @@ final class MuxMateHelper
      * @param string|null $policy
      * @return string|null
      * @throws InvalidConfigException
+     * @throws \Exception
      */
     public static function getMuxStreamUrl(?Asset $asset, ?array $params = null, ?string $policy = null): ?string
     {
-
         if (
             !$asset instanceof Asset ||
             MuxMateHelper::getMuxStatus($asset) !== 'ready') {
@@ -273,18 +276,16 @@ final class MuxMateHelper
             return null;
         }
 
-        $settings = MuxMate::getInstance()->getSettings();
-
-        // Get max resolution
-        $maxResolutions = ['720p', '1080p', '1440p', '2160p'];
-        $maxResolution = $params['max_resolution'] ?? $settings->defaultMaxResolution;
-        if ($maxResolution && !in_array($maxResolution, $maxResolutions)) {
-            throw new \Exception("Invalid max_resolution \"$maxResolution\". Needs to be one of " . implode(', ', $maxResolutions));
-        }
+        // Get min/max resolution
+        ['min_resolution' => $minResolution, 'max_resolution' => $maxResolution] = self::_getMinMaxResolutionFromParams($params ?? []);
 
         // Normalize params
         $params = [];
-        if ($maxResolution) {
+        if (!empty($minResolution)) {
+            $params['min_resolution'] = $minResolution;
+        }
+
+        if (!empty($maxResolution)) {
             $params['max_resolution'] = $maxResolution;
         }
 
@@ -304,6 +305,15 @@ final class MuxMateHelper
 
     }
 
+    /**
+     * @param Asset|null $asset
+     * @param array|null $options
+     * @param array|null $params
+     * @param string|null $policy
+     * @return Markup|null
+     * @throws InvalidConfigException
+     * @throws \Exception
+     */
     public static function getMuxVideoTag(?Asset $asset, ?array $options = null, ?array $params = null, ?string $policy = null): ?Markup
     {
 
@@ -324,24 +334,24 @@ final class MuxMateHelper
         $inline = $options['inline'] ?? null;
         $lazyload = $options['lazyload'] ?? $settings->lazyloadMuxVideo;
 
-        // Get max resolution
-        $maxResolutions = ['720p', '1080p', '1440p', '2160p'];
-        $maxResolution = $params['max_resolution'] ?? $settings->defaultMaxResolution;
-        if ($maxResolution && !in_array($maxResolution, $maxResolutions)) {
-            throw new \Exception("Invalid max_resolution \"$maxResolution\". Needs to be one of " . implode(', ', $maxResolutions));
-        }
+        // Get min/max resolution
+        ['min_resolution' => $minResolution, 'max_resolution' => $maxResolution] = self::_getMinMaxResolutionFromParams($params ?? []);
 
         if ($playbackId->policy === MuxMateHelper::PLAYBACK_POLICY_SIGNED) {
+            $claims = [];
+            if (!empty($minResolution)) {
+                $claims['min_resolution'] = $minResolution;
+            }
             if (!empty($maxResolution)) {
-                $claims = [
-                    'max_resolution' => $params['max_resolution'],
-                ];
-            } else {
+                $claims['max_resolution'] = $maxResolution;
+            }
+            if (empty($claims)) {
                 $claims = null;
             }
             if (!$token = SignedUrlsHelper::getToken($playbackId, SignedUrlsHelper::SIGNED_URL_AUDIENCE_VIDEO, $claims, MuxMateHelper::getMuxVideoDuration($asset))) {
                 return null;
             }
+            $minResolution = null;
             $maxResolution = null;
         } else {
             $token = null;
@@ -359,6 +369,7 @@ final class MuxMateHelper
                 'nonce' => $nonce,
                 'inline' => $inline,
                 'lazyload' => $lazyload,
+                'minResolution' => $minResolution,
                 'maxResolution' => $maxResolution,
             ], View::TEMPLATE_MODE_CP));
         } catch (\Throwable $e) {
@@ -661,6 +672,31 @@ final class MuxMateHelper
         }
 
         return $assetUrl;
+    }
+
+    /**
+     * @param array $params
+     * @return array
+     * @throws \Exception
+     */
+    private static function _getMinMaxResolutionFromParams(array $params): array
+    {
+        $settings = MuxMate::getInstance()->getSettings();
+        $minResolution = $params['min_resolution'] ?? $settings->defaultMinResolution ?: null;
+        if (!empty($minResolution) && !in_array($minResolution, self::MUX_RESOLUTIONS, true)) {
+            throw new \Exception("Invalid min_resolution \"$minResolution\". Needs to be one of " . implode(', ', self::MUX_RESOLUTIONS));
+        }
+
+        // Get max resolution
+        $maxResolution = $params['max_resolution'] ?? $settings->defaultMaxResolution ?: null;
+        if (!empty($maxResolution) && !in_array($maxResolution, self::MUX_RESOLUTIONS, true)) {
+            throw new \Exception("Invalid max_resolution \"$maxResolution\". Needs to be one of " . implode(', ', self::MUX_RESOLUTIONS));
+        }
+
+        return [
+            'min_resolution' => $minResolution,
+            'max_resolution' => $maxResolution,
+        ];
     }
 
 }

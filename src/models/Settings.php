@@ -24,6 +24,8 @@ class Settings extends Model
 
     public string $defaultMp4Quality = MuxMateHelper::STATIC_RENDITION_QUALITY_HIGH;
 
+    public ?string $defaultMinResolution = null;
+
     public ?string $defaultMaxResolution = null;
 
     public ?string $maxResolutionTier = null;

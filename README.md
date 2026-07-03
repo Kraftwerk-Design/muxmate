@@ -446,10 +446,15 @@ Default `null` (defaults to `'high'`)
 
 The default quality to use for static renditions. Needs to be one of `'high'` (default), `'medium'` or `'low'`.  
 
+#### `defaultMinResolution` [string|null]  
+Default `null`
+
+The default [`min_resolution`](https://www.mux.com/docs/guides/control-playback-resolution#specify-minimum-resolution) param to use for HLS streams. Needs to be one of `'270p'`, `'360px'`, `'480p'`, `'540p'`, `'720p'`, `'1080p'`, `'1440p'` or `'2160p'`.
+
 #### `defaultMaxResolution` [string|null]  
 Default `null`  
 
-The default [`max_resolution`](https://docs.mux.com/guides/video/control-playback-resolution#specify-maximum-resolution) param to use for HLS streams. Needs to be one of `'720p'`, `'1080p'`, `'1440p'` or `'2160p'`.      
+The default [`max_resolution`](https://www.mux.com/docs/guides/control-playback-resolution#specify-maximum-resolution) param to use for HLS streams. Needs to be one of `'270p'`, `'360px'`, `'480p'`, `'540p'`, `'720p'`, `'1080p'`, `'1440p'` or `'2160p'`.      
 
 #### `maxResolutionTier` [string|null]  
 Default `null` (defaults to `'1080p'`)  
@@ -496,7 +501,7 @@ inline: true # Automatically sets all the required attributes for videos that sh
 lazyload: true # Lazyloads the `<mux-video>` web component. Defaults to the `lazyloadMuxVideo` config setting
 ```
 
-The `params` array can contain Mux video params (i.e. "playback modifier"), such as the `max_resolution` param:  
+The `params` array can contain Mux video params (i.e. "playback modifier"), such as the `min_resolution` or `max_resolution` params:  
 
 ```twig
 {{ asset.getMuxVideo(null, { max_resolution: '720p' }) }}
