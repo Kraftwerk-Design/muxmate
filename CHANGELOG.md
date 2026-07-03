@@ -1,6 +1,6 @@
 # MuxMate Changelog
 
-## Unreleased
+## 3.3.0 - 2026-07-03
 > [!IMPORTANT]
 > This release contains a breaking change: incoming Mux webhooks are now rejected unless the new `muxWebhookSigningSecret` config setting is set to your webhook's signing secret. Webhooks will not work until this is configured.
 
