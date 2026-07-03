@@ -54,6 +54,14 @@ In your Mux account, visit Settings -> Webhooks, select the appropriate environm
 
 _If this is a local environment (or otherwise not accessible from outside), you can use Ngrok or similar to create a publicly available Webhook endpoint URL._  
 
+MuxMate verifies the signature of every incoming webhook, so you **must** configure the webhook's signing secret. In the Mux dashboard, open the webhook you just created and copy its signing secret, then add it to your `config/_muxmate.php` file via the `muxWebhookSigningSecret` setting:
+
+```php
+'muxWebhookSigningSecret' => App::env('MUX_WEBHOOK_SIGNING_SECRET'),
+```
+
+_Webhooks with a missing or invalid signature are rejected, so incoming webhooks won't work until this is set._  
+
 ### 5. Create a MuxMate field and add it to a volume
 
 MuxMate ships with a custom "MuxMate" field type. Create a field with this field type (name or handle doesn't matter), and add it to the field layout for any volume(s) where you plan on uploading your videos.
@@ -422,6 +430,11 @@ The Mux access token ID
 Default: `null`  
 
 The Mux access token secret key  
+
+#### `muxWebhookSigningSecret` [string|null]  
+Default: `null`  
+
+The signing secret for your Mux webhook, used to verify the signature of incoming webhooks. You'll find it in the Mux dashboard under Settings -> Webhooks, on the webhook's details page. Incoming webhooks are rejected unless this is set and their signature is valid.  
 
 #### `muxSigningKey` [array|null]  
 Default `null`  

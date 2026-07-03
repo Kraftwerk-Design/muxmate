@@ -4,11 +4,13 @@ namespace vaersaagod\muxmate\controllers;
 
 use Craft;
 use craft\elements\Asset;
+use craft\helpers\App;
 use craft\helpers\Json;
 use craft\web\Controller;
 
 use vaersaagod\muxmate\fields\MuxMateField;
 use vaersaagod\muxmate\helpers\MuxMateHelper;
+use vaersaagod\muxmate\MuxMate;
 
 use yii\web\BadRequestHttpException;
 
@@ -18,6 +20,9 @@ class WebhookController extends Controller
     public array|bool|int $allowAnonymous = true;
 
     public $enableCsrfValidation = false;
+
+    /** @var int Maximum age (in seconds) of a webhook, based on its signature timestamp, before it's rejected as a replay */
+    private const SIGNATURE_TOLERANCE = 300;
 
     /**
      * @return bool
@@ -32,6 +37,11 @@ class WebhookController extends Controller
 
         if (empty($webhookJson)) {
             throw new BadRequestHttpException();
+        }
+
+        // Verify the Mux signature before trusting anything in the payload
+        if (!$this->_verifySignature($webhookJson)) {
+            throw new BadRequestHttpException('Invalid webhook signature.');
         }
 
         $webhookData = Json::decode($webhookJson);
@@ -107,5 +117,61 @@ class WebhookController extends Controller
 
         return $success;
 
+    }
+
+    /**
+     * Verifies the `Mux-Signature` header against the raw request body, using the
+     * configured webhook signing secret. See https://docs.mux.com/guides/verify-webhook-signatures
+     *
+     * @param string $payload The raw request body
+     * @return bool
+     */
+    private function _verifySignature(string $payload): bool
+    {
+
+        $secret = App::parseEnv(MuxMate::getInstance()->getSettings()->muxWebhookSigningSecret);
+
+        if (empty($secret)) {
+            Craft::error('Unable to verify Mux webhook signature: no webhook signing secret is configured.', __METHOD__);
+            return false;
+        }
+
+        $header = $this->request->getHeaders()->get('Mux-Signature');
+        if (empty($header)) {
+            Craft::error('Mux webhook rejected: missing "Mux-Signature" header.', __METHOD__);
+            return false;
+        }
+
+        // The header looks like "t=1565125137,v1=1b2c3d..."
+        $parts = [];
+        foreach (explode(',', $header) as $part) {
+            $kv = explode('=', trim($part), 2);
+            if (count($kv) === 2) {
+                $parts[$kv[0]] = $kv[1];
+            }
+        }
+
+        $timestamp = $parts['t'] ?? null;
+        $signature = $parts['v1'] ?? null;
+
+        if (empty($timestamp) || empty($signature) || !ctype_digit((string)$timestamp)) {
+            Craft::error('Mux webhook rejected: malformed "Mux-Signature" header.', __METHOD__);
+            return false;
+        }
+
+        // Guard against replays of old (or future-dated) payloads
+        if (abs(time() - (int)$timestamp) > self::SIGNATURE_TOLERANCE) {
+            Craft::error('Mux webhook rejected: signature timestamp outside of tolerance.', __METHOD__);
+            return false;
+        }
+
+        $expectedSignature = hash_hmac('sha256', "{$timestamp}.{$payload}", $secret);
+
+        if (!hash_equals($expectedSignature, $signature)) {
+            Craft::error('Mux webhook rejected: signature mismatch.', __METHOD__);
+            return false;
+        }
+
+        return true;
     }
 }

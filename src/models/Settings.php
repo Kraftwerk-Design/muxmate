@@ -18,6 +18,8 @@ class Settings extends Model
 
     public ?string $muxSecretKey = null;
 
+    public ?string $muxWebhookSigningSecret = null;
+
     public ?MuxSigningKey $muxSigningKey = null;
 
     public string $defaultPolicy = MuxMateHelper::PLAYBACK_POLICY_PUBLIC;

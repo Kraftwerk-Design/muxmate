@@ -303,7 +303,7 @@ class MuxMate extends Plugin
                     if (empty($content)) {
                         return;
                     }
-                    preg_match_all('/(MUX_TOKEN_PLACEHOLDER)(.+)(MUX_TOKEN_PLACEHOLDER)/', $content, $matches);
+                    preg_match_all('/(MUX_TOKEN_PLACEHOLDER)(.+?)(MUX_TOKEN_PLACEHOLDER)/', $content, $matches);
                     if (empty($matches[0] ?? null)) {
                         return;
                     }
