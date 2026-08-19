@@ -1,5 +1,9 @@
 # MuxMate Changelog
 
+## 3.3.1 - 2026-08-19
+### Fixed 
+- Fixed a bug where Mux videos would not play
+
 ## 3.3.0 - 2026-07-03
 > [!IMPORTANT]
 > This release contains a breaking change: incoming Mux webhooks are now rejected unless the new `muxWebhookSigningSecret` config setting is set to your webhook's signing secret. Webhooks will not work until this is configured.
