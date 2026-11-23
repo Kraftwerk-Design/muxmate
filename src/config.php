@@ -3,6 +3,7 @@
 return [
     'muxAccessTokenId' => null,
     'muxSecretKey' => null,
+    'muxWebhookSigningSecret' => null,
     'muxSigningKey' => null,
     'defaultPolicy' => null,
     'defaultMp4Quality' => null,
