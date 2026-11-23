@@ -2,7 +2,7 @@
     "name": "kraftwerk-design/muxmate",
     "description": "Mux ado about streaming, mate! Forked from vaersaagod/muxmate to support graphQL",
     "type": "craft-plugin",
-    "version": "3.4.0",
+    "version": "3.4.1",
     "require": {
         "php": ">=8.2",
         "craftcms/cms": "^5.2.0",

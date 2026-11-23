@@ -1,5 +1,9 @@
 # MuxMate Changelog
 
+## 3.4.1 - 2026-11-23
+### Fixed
+- Mux data is no longer detached, and a new Mux asset is no longer created, when fetching an existing Mux asset fails for any reason other than the Mux asset not existing (404) or its ID being invalid (400)
+
 ## 3.4.0 - 2026-11-23
 ### Added
 - Added the `deleteMuxAssets` config setting

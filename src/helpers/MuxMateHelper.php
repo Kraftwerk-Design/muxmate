@@ -14,6 +14,7 @@ use craft\helpers\UrlHelper;
 use craft\web\View;
 
 use Illuminate\Support\Collection;
+use MuxPhp\ApiException;
 
 use Twig\Markup;
 use vaersaagod\muxmate\fields\MuxMateField;
@@ -461,9 +462,16 @@ final class MuxMateHelper
         if ($muxAssetId) {
             try {
                 $muxAsset = MuxApiHelper::getAsset($muxAssetId);
+            } catch (ApiException $e) {
+                Craft::error($e, __METHOD__);
+                // Only a missing or unparseable Mux asset ID means the Mux asset is gone
+                if (!in_array($e->getCode(), [400, 404], true)) {
+                    return false;
+                }
+                MuxMateHelper::deleteMuxAttributesForAsset($asset);
             } catch (\Throwable $e) {
                 Craft::error($e, __METHOD__);
-                MuxMateHelper::deleteMuxAttributesForAsset($asset);
+                return false;
             }
         }
 
