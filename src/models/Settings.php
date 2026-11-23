@@ -42,6 +42,8 @@ class Settings extends Model
 
     public ?array $volumes = null;
 
+    public bool $deleteMuxAssets = true;
+
     public function setAttributes($values, $safeOnly = true): void
     {
         $values['muxPlayerUrl'] = $values['muxPlayerUrl'] ?? null;

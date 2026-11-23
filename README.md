@@ -494,6 +494,15 @@ Default `null`
 Default: `null`
 Per-volume config settings. Currently only supports a `baseUrl` setting, see "Override your volume's file system Base URL in local environments" above.  
 
+#### `deleteMuxAssets` [bool]  
+Default: `true`  
+
+Whether MuxMate deletes the Mux asset when a video asset is deleted, replaced or re-created, or its Mux asset can't be fetched. Set it to `false` in environments that share a Mux environment with production, so they only detach the Mux data in Craft:  
+
+```php
+'deleteMuxAssets' => App::env('CRAFT_ENVIRONMENT') === 'production',
+```
+
 ## Mux asset methods and attributes
 MuxMate adds some methods and attributes to asset models:
 

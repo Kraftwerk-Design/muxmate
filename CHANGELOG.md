@@ -1,5 +1,9 @@
 # MuxMate Changelog
 
+## 3.4.0 - 2026-11-23
+### Added
+- Added the `deleteMuxAssets` config setting
+
 ## 3.3.1 - 2026-08-19
 ### Fixed 
 - Fixed a bug where Mux videos would not play

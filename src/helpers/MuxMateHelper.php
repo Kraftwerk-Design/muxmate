@@ -561,7 +561,7 @@ final class MuxMateHelper
             return false;
         }
 
-        if ($alsoDeleteMuxAsset) {
+        if ($alsoDeleteMuxAsset && MuxMate::getInstance()->getSettings()->deleteMuxAssets) {
             try {
                 MuxApiHelper::deleteAsset($muxAssetId);
             } catch (\Throwable) {
