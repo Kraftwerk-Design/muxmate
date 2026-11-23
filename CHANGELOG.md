@@ -8,6 +8,12 @@
 > [!IMPORTANT]
 > This release contains a breaking change: incoming Mux webhooks are now rejected unless the new `muxWebhookSigningSecret` config setting is set to your webhook's signing secret. Webhooks will not work until this is configured.
 
+### Changed
+
+- Bump `firebase/php-jwt` to `^7.0`
+
+## 3.2.0
+
 ### Added
 - Added support for passing `min_resolution` to `getMuxStreamUrl()` and `getMuxVideo()`
 - Added the `muxWebhookSigningSecret` config setting, used to verify the signature of incoming Mux webhooks
