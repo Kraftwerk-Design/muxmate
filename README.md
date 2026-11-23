@@ -54,6 +54,14 @@ In your Mux account, visit Settings -> Webhooks, select the appropriate environm
 
 _If this is a local environment (or otherwise not accessible from outside), you can use Ngrok or similar to create a publicly available Webhook endpoint URL._  
 
+MuxMate verifies the signature of every incoming webhook, so you **must** configure the webhook's signing secret. In the Mux dashboard, open the webhook you just created and copy its signing secret, then add it to your `config/_muxmate.php` file via the `muxWebhookSigningSecret` setting:
+
+```php
+'muxWebhookSigningSecret' => App::env('MUX_WEBHOOK_SIGNING_SECRET'),
+```
+
+_Webhooks with a missing or invalid signature are rejected, so incoming webhooks won't work until this is set._  
+
 ### 5. Create a MuxMate field and add it to a volume
 
 MuxMate ships with a custom "MuxMate" field type. Create a field with this field type (name or handle doesn't matter), and add it to the field layout for any volume(s) where you plan on uploading your videos.
@@ -423,6 +431,11 @@ Default: `null`
 
 The Mux access token secret key  
 
+#### `muxWebhookSigningSecret` [string|null]  
+Default: `null`  
+
+The signing secret for your Mux webhook, used to verify the signature of incoming webhooks. You'll find it in the Mux dashboard under Settings -> Webhooks, on the webhook's details page. Incoming webhooks are rejected unless this is set and their signature is valid.  
+
 #### `muxSigningKey` [array|null]  
 Default `null`  
 
@@ -446,10 +459,15 @@ Default `null` (defaults to `'high'`)
 
 The default quality to use for static renditions. Needs to be one of `'high'` (default), `'medium'` or `'low'`.  
 
+#### `defaultMinResolution` [string|null]  
+Default `null`
+
+The default [`min_resolution`](https://www.mux.com/docs/guides/control-playback-resolution#specify-minimum-resolution) param to use for HLS streams. Needs to be one of `'270p'`, `'360px'`, `'480p'`, `'540p'`, `'720p'`, `'1080p'`, `'1440p'` or `'2160p'`.
+
 #### `defaultMaxResolution` [string|null]  
 Default `null`  
 
-The default [`max_resolution`](https://docs.mux.com/guides/video/control-playback-resolution#specify-maximum-resolution) param to use for HLS streams. Needs to be one of `'720p'`, `'1080p'`, `'1440p'` or `'2160p'`.      
+The default [`max_resolution`](https://www.mux.com/docs/guides/control-playback-resolution#specify-maximum-resolution) param to use for HLS streams. Needs to be one of `'270p'`, `'360px'`, `'480p'`, `'540p'`, `'720p'`, `'1080p'`, `'1440p'` or `'2160p'`.      
 
 #### `maxResolutionTier` [string|null]  
 Default `null` (defaults to `'1080p'`)  
@@ -496,7 +514,7 @@ inline: true # Automatically sets all the required attributes for videos that sh
 lazyload: true # Lazyloads the `<mux-video>` web component. Defaults to the `lazyloadMuxVideo` config setting
 ```
 
-The `params` array can contain Mux video params (i.e. "playback modifier"), such as the `max_resolution` param:  
+The `params` array can contain Mux video params (i.e. "playback modifier"), such as the `min_resolution` or `max_resolution` params:  
 
 ```twig
 {{ asset.getMuxVideo(null, { max_resolution: '720p' }) }}
